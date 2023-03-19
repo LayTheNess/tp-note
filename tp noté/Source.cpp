@@ -31,6 +31,14 @@ void Solution_P1(const std::vector<std::pair<int, int>>& liste_objets, int capac
     vector<pair<int, int>> tab_size;
     float rapport_benef{ 0.f }; // le rapport  prix/capacité
     int j{ 0 }; // l'indice de l'objet
+    string nomFichier = "tmp.txt";
+
+    ofstream fic(nomFichier);
+    if (!fic) {
+
+        cout << "Erreur lors de l'ouverture du fichier" << endl;
+    }
+    
 
     // étiquettage des objets en fonction du rapport prix/capacité
     
@@ -58,7 +66,8 @@ void Solution_P1(const std::vector<std::pair<int, int>>& liste_objets, int capac
     int i{ 0 };
     int random;
     // Tant qu'il reste de la capacité suffisante dans le véhicule...
-    while (capacite_objets > tab_size[i].second) {
+    int total_gain=0;
+    while (capacite_objets >= tab_size[i].second) {
         
         if (liste_objets[tab_rapport_benef[k].first].first > capacite_objets) {
 
@@ -75,19 +84,76 @@ void Solution_P1(const std::vector<std::pair<int, int>>& liste_objets, int capac
             }
             capacite_objets -= liste_objets[tab_rapport_benef[k].first].first;
             capacite_vehicule.emplace_back(liste_objets[tab_rapport_benef[k].first].first, liste_objets[tab_rapport_benef[k].first].second);
+            total_gain += liste_objets[tab_rapport_benef[k].first].second;
             k++;
         }
     }
+
+    fic << total_gain << endl;
 
 
     // Affichage des objets optimaux choisis
     cout << endl << "les objets choisis sont :" << endl;
     for (auto itr = 0; itr < capacite_vehicule.size(); ++itr) {
         
-        
-        cout << tab_rapport_benef[itr].first << " " << capacite_vehicule[itr].first << " " << capacite_vehicule[itr].second << endl;
+        fic << capacite_vehicule[itr].first << " " << capacite_vehicule[itr].second << endl;
+        cout << capacite_vehicule[itr].first << " " << capacite_vehicule[itr].second << endl;
     }
+
+    fic.close();
+
+    ifstream flux("tmp.txt");
+    ifstream f("opti.txt");
+    if (flux) {
+
+        int ratio;
+        flux >> ratio;
+        cout << ratio << endl;
+        if (f) {
+
+            int ratio2;
+            f >> ratio2;
+            cout << ratio2 << endl;
+
+            if (ratio > ratio2) {
+                f.close();
+                flux.close();
+                remove("opti.txt");
+                char oldname[] = "tmp.txt";
+                char newname[] = "opti.txt";
+
+                if (rename(oldname, newname) != 0) {
+                    perror("Error renaming file");
+                }
+                else {
+                    cout << "File renamed successfully";
+                }
+                remove("tmp.txt");
+
+            }
+        }
+        else {
+            flux.close();
+            char oldname[] = "tmp.txt";
+            char newname[] = "opti.txt";
+            cout << "pas de fichier opti.txt" << endl;
+            if (rename(oldname, newname) != 0) {
+                perror("Error renaming file");
+            }
+            else {
+                cout << "File renamed successfully";
+            }
+
+        }
+
+        
+    }
+    f.close();
+    flux.close();
+    
 }
+
+
 
 
 int main() {
