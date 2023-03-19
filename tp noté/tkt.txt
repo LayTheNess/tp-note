@@ -1,0 +1,79 @@
+#include <iostream>
+#include <vector>
+#include <tuple>
+#include <map>
+
+using namespace std;
+void toutesLesPermutations(vector<string> villes, int debut, int fin);
+
+int main()
+{
+	srand(time(NULL));
+	vector<string> villes{ "Lille", "VdA"};
+	toutesLesPermutations(villes, 0, villes.size() - 1);
+	
+	constexpr int tailleMinNomVille = 4;
+	constexpr int tailleMaxNomVille = 10;
+	constexpr int codeASCIIde_a = 97;
+	constexpr int codeASCIIde_A = 65;
+	constexpr int nombreDeLettres = 26;
+	constexpr int grainePourLeRand = 1;
+	constexpr int nombreDeVilles = 4;
+	constexpr int nombreCombinaisons = 24;
+	constexpr int tailleCoteCarte = 100;
+
+	int nbLettresNomVille;
+	string mot;
+	char lettre;
+	char maj;
+	int x, y;
+	map<string, tuple<int, int, int>> mapVilles;
+
+
+	for (int i = 0; i < nombreDeVilles; i++) {
+		x = rand() % (100);
+		y = rand() % (100);
+
+		auto monTuple = std::make_tuple(i, x, y);
+
+
+		nbLettresNomVille = tailleMinNomVille + rand() % (tailleMaxNomVille - tailleMinNomVille + 1);
+		maj = codeASCIIde_A + rand() % (nombreDeLettres - 1);
+		mot += maj;
+		lettre;
+		for (int j = 0; j < nbLettresNomVille; j++) {
+
+			lettre = codeASCIIde_a + rand() % (nombreDeLettres - 1);
+			mot += lettre;
+		}
+		cout << mot << endl;
+		mot = "";
+
+	}
+
+	return 0;
+}
+/// \brief Methode recursive generant l ensemble des mots possibles
+/// avec les caractères du mot villes donne en parametre.
+void toutesLesPermutations(vector<string> villes, int debut, int fin) {
+	if (debut == fin) {
+		for (int j = 0; j < villes.size(); j++) {
+			cout << villes[j]<< " ";
+		}
+		cout << endl;
+	}
+
+	else
+	{
+		// Permutations made
+		for (int i = debut; i <= fin; i++)
+		{
+			// echange des deux lettres
+			swap(villes[debut], villes[i]);
+			// Appel Recursif
+			toutesLesPermutations(villes, debut + 1, fin);
+			// On revient à la situation précédente
+			swap(villes[debut], villes[i]);
+		}
+	}
+}
